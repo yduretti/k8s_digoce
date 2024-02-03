@@ -82,7 +82,7 @@ pipeline {
                     sh """
                         sed -i "s/{{tag}}/$tag_version/g" ./k8s/api/deployment.yaml
                         cat ./k8s/api/deployment.yaml
-                        kubectl apply -f ./k8s -R                        
+                        ./kubectl apply -f ./k8s -R                        
                     """
                     // ./kubectl get all
                 }  
