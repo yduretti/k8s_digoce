@@ -45,42 +45,48 @@ pipeline {
             }
         }
 
+        // stage("Push Kubernetes") {
+        //     // agent {
+        //     //     kubernetes {
+        //     //         cloud 'do-kube-dev'
+        //     //     }
+        //     // }
+        //     environment {
+        //         tag_version = "${env.BUILD_ID}"
+        //     }
+        //     steps {
+        //         // withKubeConfig([credentialsId: 'kubeconfig']) {
+        //         //     sh """
+        //         //         sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml
+        //         //         cat ./k8s/api/deployment.yaml
+        //         //         kubectl apply -f ./k8s -R
+        //         //     """
+        //         // }  
+        //         script
+        //         {
+        //             sh 'pwd'
+        //             sh 'ls -l'
+        //             //sh 'sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml'
+        //             //sh 'cat ./k8s/api/deployment.yaml'
+        //             //kubernetesDeploy(configs: '**/k8s/**', kubeconfigId: 'kubeconfig')
+        //         }
+        //     }          
+        // }
+
         stage("Push Kubernetes") {
-            // agent {
-            //     kubernetes {
-            //         cloud 'do-kube-dev'
-            //     }
-            // }
             environment {
                 tag_version = "${env.BUILD_ID}"
             }
             steps {
-                // withKubeConfig([credentialsId: 'kubeconfig']) {
-                //     sh """
-                //         sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml
-                //         cat ./k8s/api/deployment.yaml
-                //         kubectl apply -f ./k8s -R
-                //     """
-                // }  
-                script
-                {
-                    sh 'pwd'
-                    sh 'ls -l'
-                    //sh 'sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml'
-                    //sh 'cat ./k8s/api/deployment.yaml'
-                    //kubernetesDeploy(configs: '**/k8s/**', kubeconfigId: 'kubeconfig')
-                }
-            }          
-        }
-
-        stage("Kubernetes") {
-            steps {
                 withKubeConfig([credentialsId: 'kubeconfig']) {
                     sh """
-                        ./kubectl get all
+                        sed -i "s/{{tag}}/$tag_version/g" ./k8s/api/deployment.yaml
+                        cat ./k8s/api/deployment.yaml
+                        kubectl apply -f ./k8s -R                        
                     """
+                    // ./kubectl get all
                 }  
             }          
-        }        
+        }       
     }
 }
